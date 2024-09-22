@@ -1,25 +1,23 @@
+import express from 'express';
+import cors from 'cors';
 import { ApolloServer } from '@apollo/server';
-import { startStandaloneServer } from '@apollo/server/standalone';
+import { expressMiddleware as apolloMiddleware } from '@apollo/server/express4';
+import { resolvers } from './resolvers.js';
+import { readFile } from 'node:fs/promises';
 
-const typeDefs = `#graphql
+const PORT = 1488;
 
-    schema {
-        query: Query
-    }
+const application = express();
 
-    type Query {
-        greeting: String,
-        imageUrl: String,
-    }
-`;
+application.use(cors(), express.json());
 
-const resolvers = {
-    Query: {
-        greeting: () => 'Some text',
-        imageUrl: () => 'Some image url',
-    },
-}
+const typeDefs = await readFile('./schema.graphql', 'utf8');
 
-const server = new ApolloServer({ typeDefs, resolvers });
-const info = await startStandaloneServer(server, { listen: { port: 1488 } });
-console.log(`server is running at ${info.url}`);
+const apollo = new ApolloServer({ typeDefs, resolvers });
+await apollo.start();
+application.use('/graphql', apolloMiddleware(apollo));
+
+application.listen({ port: PORT }, () => {
+    console.log(`Server is successfully running on ${PORT}`);
+    console.log(`GraphQL endpoint is successfully running on http://localhost:${PORT}/graphql`);
+});
