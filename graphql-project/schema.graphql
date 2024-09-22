@@ -1,4 +1,10 @@
 type Query {
-    id: Int,
-    imageUrl: String,
+    id: ID,
+    params: Params,
+}
+
+type Params {
+    x: Int,
+    y: Int,
+    z: Int,
 }
