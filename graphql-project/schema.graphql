@@ -1,6 +1,6 @@
 type Query {
-    id: ID,
-    params: Params,
+    id: ID!,
+    params: [Params!],
 }
 
 type Params {

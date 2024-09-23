@@ -1,11 +1,11 @@
 const resolvers = {
     Query: {
         id: () => 'some-id',
-        params: () => ({
+        params: () => ([{
             x: 0,
             y: 0,
             z: 0,
-        }),
+        }]),
     }
 }
 
