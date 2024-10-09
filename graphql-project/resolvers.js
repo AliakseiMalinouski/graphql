@@ -1,11 +1,12 @@
+import { getJobs } from "./database/jobs.js"
+
 const resolvers = {
     Query: {
         id: () => 'some-id',
-        params: () => ([{
-            x: 0,
-            y: 0,
-            z: 0,
-        }]),
+        jobs: async () => {
+            const jobs = await getJobs();
+            return jobs; 
+        },
     }
 }
 

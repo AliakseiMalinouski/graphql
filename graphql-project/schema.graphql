@@ -1,10 +1,12 @@
 type Query {
     id: ID!,
-    params: [Params!],
+    jobs: [Jobs!],
 }
 
-type Params {
-    x: Int,
-    y: Int,
-    z: Int,
+type Jobs {
+    id: Int,
+    title: String,
+    createdAt: Int,
+    companyId: String,
+    description: String,
 }
