@@ -7,6 +7,11 @@ const resolvers = {
             const jobs = await getJobs();
             return jobs; 
         },
+    },
+    Job: {
+        date: (job) => {
+            return job.createdAt.splice('').slice(0).join('');
+        }
     }
 }
 
