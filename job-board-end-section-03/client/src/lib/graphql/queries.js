@@ -36,3 +36,17 @@ export const getJob = async (id) => {
     return job;
 }
 
+
+export const getCompany = async (id) => {
+    const query = gql`
+        query ($id: ID!) {
+            company(id: $id) {
+                id
+                name
+                description
+            }
+        }
+    `;
+    const { company } = await client.request(query, { id });
+    return company;
+}
