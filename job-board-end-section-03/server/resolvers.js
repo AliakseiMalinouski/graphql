@@ -20,7 +20,7 @@ export const resolvers = {
   },
 
   Mutation: {
-    createJob: (_root, { title, description }) => {
+    createJob: (_root, { input: { title, description } }) => {
       const companyId = 'some_id';
       const newJob = createJob({ companyId, title, description });
       return newJob;
