@@ -1,17 +1,13 @@
-import { GraphQLClient } from "graphql-request";
-import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
-
-const client = new GraphQLClient('http://localhost:9000/graphql');
+import { ApolloClient, InMemoryCache, createHttpLink, gql } from "@apollo/client";
 
 const apolloClient = new ApolloClient({
-    uri: 'http://localhost:9000/graphql',
+    uri: createHttpLink({ uri: 'http://localhost:9000/graphql' }),
     cache: new InMemoryCache(),
 });
 
-export const getJobs = async () => {
-    const query = gql`
-    query {
-        jobs {
+const getJobsFragment = gql`
+    fragment GetJobs on Jobs {
+        {
             id
             date
             title
@@ -20,9 +16,23 @@ export const getJobs = async () => {
             name
             }
         }
-    }`;
-    const { jobs } = await client.request(query);
-    return jobs;
+    }
+`;
+
+export const getJobs = async () => {
+    const query = gql`
+    query {
+        jobs {
+            ...GetJobs,
+        }
+    }
+    ${getJobsFragment}
+    `;
+    const { data } = await apolloClient.query({ 
+        query,
+        fetchPolicy: 'network-only',
+    });
+    return data.jobs;
 }
 
 export const getJob = async (id) => {
@@ -38,8 +48,14 @@ export const getJob = async (id) => {
             }
         }
     }`;
-    const { job } = await client.request(query, { id });
-    return job;
+    const { data } = await apolloClient.query({
+        query,
+        variables: { 
+            id,
+        },
+        fetchPolicy: 'cache-first',
+    });
+    return data.job;
 }
 
 
@@ -53,6 +69,12 @@ export const getCompany = async (id) => {
             }
         }
     `;
-    const { company } = await client.request(query, { id });
-    return company;
+    const { data } = await apolloClient.query({
+        query,
+        variables: {
+            id,
+        },
+        fetchPolicy: 'cache-first',
+    });
+    return data.company;
 }

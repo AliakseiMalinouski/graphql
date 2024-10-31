@@ -1,6 +1,11 @@
-import { GraphQLClient, gql } from "graphql-request";
+import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
 
 const client = new GraphQLClient('http://localhost:9000/graphql');
+
+const apolloClient = new ApolloClient({
+    uri: createHttpLink({ uri: 'http://localhost:9000/graphql' }),
+    cache: new InMemoryCache(),
+});
 
 export async function createJob ({ title, description }) {
     const mutation = gql`
@@ -10,11 +15,11 @@ export async function createJob ({ title, description }) {
             }
         }
     `;
-    const { job } = await client.request(mutation, {
+    const { data } = await apolloClient.mutate(mutation, {
         title,
         description,
     });
-    return job;
+    return data.job;
 }
 
 export async function deleteJob (id) {
@@ -25,10 +30,10 @@ export async function deleteJob (id) {
             }
         }
     `;
-    const { job } = await client.request(mutation, {
+    const { data } = await apolloClient.mutate(mutation, {
         id
     });
-    return job;
+    return data.job;
 }
 
 export async function updateJob ({
@@ -43,10 +48,10 @@ export async function updateJob ({
             }
         }
     `;
-    const { job } = await client.request(mutation, {
+    const { data } = await apolloClient.mutate(mutation, {
         id,
         title,
         description,
     });
-    return job;
+    return data.job;
 }
